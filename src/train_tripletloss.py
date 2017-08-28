@@ -275,8 +275,9 @@ def train(args, sess, dataset, epoch, image_paths_placeholder, labels_placeholde
                          affinity_watch_binarized: np.reshape(aff_binarized,
                                                               [1, args.people_per_batch * args.images_per_person,
                                                                args.people_per_batch * args.images_per_person, 1])}
-            summary,err, _, step, emb, lab = sess.run([summary_op,loss, train_op, global_step, embeddings, labels_batch],
-                                              feed_dict=feed_dict)
+            summary, err, _, step, emb, lab = sess.run(
+                [summary_op, loss, train_op, global_step, embeddings, labels_batch],
+                feed_dict=feed_dict)
             emb_array[lab, :] = emb
             loss_array[i] = err
             duration = time.time() - start_time
@@ -285,12 +286,12 @@ def train(args, sess, dataset, epoch, image_paths_placeholder, labels_placeholde
             batch_number += 1
             i += 1
             train_time += duration
-            summary_writer.add_summary(summary,step)
-        # Add validation loss and accuracy to summary
-        # summary = tf.Summary()
-        # # pylint: disable=maybe-no-member
-        # summary.value.add(tag='time/selection', simple_value=selection_time)
-        # summary_writer.add_summary(summary, step)
+            summary_writer.add_summary(summary, step)
+            # Add validation loss and accuracy to summary
+            # summary = tf.Summary()
+            # # pylint: disable=maybe-no-member
+            # summary.value.add(tag='time/selection', simple_value=selection_time)
+            # summary_writer.add_summary(summary, step)
     return step
 
 
@@ -457,9 +458,11 @@ def parse_arguments(argv):
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--logs_base_dir', type=str,
-                        help='Directory where to write event logs.', default='/scratch/BingZhang/AAAI/logs/facenet4drfr/')
+                        help='Directory where to write event logs.',
+                        default='/scratch/BingZhang/AAAI/logs/facenet4drfr/')
     parser.add_argument('--models_base_dir', type=str,
-                        help='Directory where to write trained models and checkpoints.', default='/scratch/BingZhang/AAAI/models/facenet4drfr/')
+                        help='Directory where to write trained models and checkpoints.',
+                        default='/scratch/BingZhang/AAAI/models/facenet4drfr/')
     parser.add_argument('--gpu_memory_fraction', type=float,
                         help='Upper bound on the amount of GPU memory that will be used by the process.', default=1.0)
     parser.add_argument('--pretrained_model', type=str,
