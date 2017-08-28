@@ -200,16 +200,17 @@ def main(args):
             # Training and validation loop
 
             epoch = 0
+            last_step = 0
             while epoch < args.max_nrof_epochs:
                 step = sess.run(global_step, feed_dict=None)
                 epoch = step // args.epoch_size
                 # Train for one epoch
-                train(args, sess, train_set, epoch, image_paths_placeholder, labels_placeholder, labels_batch,
+                last_step = train(args, sess, train_set, epoch, image_paths_placeholder, labels_placeholder, labels_batch,
                       batch_size_placeholder, learning_rate_placeholder, phase_train_placeholder, affinity_watch,
                       affinity_watch_binarized, val_embeddings_placeholder, assign_op, enqueue_op,
                       input_queue, global_step,
                       embeddings, total_loss, train_op, summary_op, summary_writer, args.learning_rate_schedule_file,
-                      args.embedding_size, anchor, positive, negative, triplet_loss, emb_saver)
+                      args.embedding_size, anchor, positive, negative, triplet_loss, emb_saver,last_step)
 
                 # Save variables and the metagraph if it doesn't exist already
                 save_variables_and_metagraph(sess, saver, summary_writer, model_dir, subdir, step)
@@ -229,7 +230,7 @@ def train(args, sess, dataset, epoch, image_paths_placeholder, labels_placeholde
           affinity_watch_binarized, val_embeddings_placeholder, assign_op, enqueue_op, input_queue,
           global_step,
           embeddings, loss, train_op, summary_op, summary_writer, learning_rate_schedule_file,
-          embedding_size, anchor, positive, negative, triplet_loss, emb_saver):
+          embedding_size, anchor, positive, negative, triplet_loss, emb_saver,last_step):
     batch_number = 0
 
     if args.learning_rate > 0.0:
@@ -323,8 +324,13 @@ def train(args, sess, dataset, epoch, image_paths_placeholder, labels_placeholde
                                                                    phase_train_placeholder: False})
         emb_val_array[lab, :] = emb
     sess.run(assign_op, feed_dict={val_embeddings_placeholder: emb_val_array})
-    emb_saver.save(sess, os.path.join(args.logs_base_dir, 'model_emb.ckpt'), global_step=112358)
-    return step
+    emb_saver.save(sess, os.path.join(args.logs_base_dir, 'model_emb.ckpt'), global_step=step)
+    if not last_step == 0:
+        model_name = 'model_emb.ckpt-%d.meta' % last_step
+        os.remove(os.path.join(args.logs_base_dir,model_name))
+        last_step = step
+
+    return last_step
 
 
 def get_val_list(args):
