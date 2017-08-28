@@ -331,7 +331,7 @@ def get_val_list(args):
     val_file = open('../data/val.txt')
     val_path = []
     for i in val_file.readlines():
-        val_path.append(os.path.join(args.data_dir, i.replace('\n', '')))
+        val_path.append(os.path.join('/scratch/BingZhang/Processed_Aligned', i.replace('\n', '')))
     return val_path
 
 
