@@ -182,7 +182,7 @@ def main(args):
         tf.train.start_queue_runners(coord=coord, sess=sess)
 
         copyfile('../data/face.png', os.path.join(log_dir, 'face.png'))
-        copyfile('../data/label.tsv', os.path.join(log_dir, 'label.tsv'))
+        copyfile('../data/labels.tsv', os.path.join(log_dir, 'labels.tsv'))
         config = tf.contrib.tensorboard.plugins.projector.ProjectorConfig()
         embedding_config = config.embeddings.add()
         embedding_config.tensor_name = val_embeddings.name
