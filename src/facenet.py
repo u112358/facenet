@@ -64,7 +64,7 @@ def triplet_loss(anchor, positive, negative, alpha):
     return loss
 
 
-def triplet_loss_v2(anchor, positive, negative, alpha):
+def triplet_loss_dual(anchor, positive, negative, alpha):
     """Calculate the triplet loss according to the FaceNet paper
 
     Args:
@@ -77,16 +77,19 @@ def triplet_loss_v2(anchor, positive, negative, alpha):
     """
     with tf.variable_scope('triplet_loss'):
         pos_dist = tf.reduce_sum(tf.square(tf.subtract(anchor, positive)), 1)
-        neg_dist = tf.reduce_sum(tf.square(tf.subtract(anchor, negative)), 1)
-
-        basic_loss = tf.add(tf.subtract(pos_dist, neg_dist), alpha)
-        push_loss = tf.reduce_mean(tf.maximum(basic_loss, 0.0), 0)
+        neg_dist1 = tf.reduce_sum(tf.square(tf.subtract(anchor, negative)), 1)
+        neg_dist2 = tf.reduce_sum(tf.square(tf.subtract(positive,negative)),1)
+        basic_loss1 = tf.add(tf.subtract(pos_dist, neg_dist1), alpha)
+        basic_loss2 = tf.add(tf.subtract(pos_dist,neg_dist2),alpha)
+        push_loss1 = tf.reduce_mean(tf.maximum(basic_loss1, 0.0), 0)
+        push_loss2 = tf.reduce_mean(tf.maximum(basic_loss2,0.0),0)
     with tf.name_scope('distances'):
-        tf.summary.histogram('push/ancho-rneg', neg_dist)
+        tf.summary.histogram('push/anchor-neg', neg_dist1)
+        tf.summary.histogram('push/pos-neg', neg_dist2)
         tf.summary.histogram('pull/anchor-pos', pos_dist)
 
-    pull_loss = tf.reduce_mean(pos_dist, 0)
-    return 0.0618 * pull_loss + push_loss
+    loss = 0.5*push_loss1+0.5*push_loss2
+    return loss
 
 
 def decov_loss(xs):

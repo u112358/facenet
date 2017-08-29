@@ -459,10 +459,10 @@ def parse_arguments(argv):
 
     parser.add_argument('--logs_base_dir', type=str,
                         help='Directory where to write event logs.',
-                        default='/scratch/BingZhang/AAAI/logs/facenet4drfr/')
+                        default='/scratch/BingZhang/AAAI/logs/original-loss/')
     parser.add_argument('--models_base_dir', type=str,
                         help='Directory where to write trained models and checkpoints.',
-                        default='/scratch/BingZhang/AAAI/models/facenet4drfr/')
+                        default='/scratch/BingZhang/AAAI/models/original-loss/')
     parser.add_argument('--gpu_memory_fraction', type=float,
                         help='Upper bound on the amount of GPU memory that will be used by the process.', default=1.0)
     parser.add_argument('--pretrained_model', type=str,

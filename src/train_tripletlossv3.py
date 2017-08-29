@@ -148,7 +148,7 @@ def main(args):
         embeddings = tf.nn.l2_normalize(prelogits, 1, 1e-10, name='embeddings')
         # Split embeddings into anchor, positive and negative and calculate triplet loss
         anchor, positive, negative = tf.unstack(tf.reshape(embeddings, [-1, 3, args.embedding_size]), 3, 1)
-        triplet_loss = facenet.triplet_loss_dual(anchor, positive, negative, args.alpha)
+        triplet_loss = facenet.triplet_loss(anchor, positive, negative, args.alpha)
 
         learning_rate = tf.train.exponential_decay(learning_rate_placeholder, global_step,
                                                    args.learning_rate_decay_epochs * args.epoch_size,
@@ -505,10 +505,10 @@ def parse_arguments(argv):
 
     parser.add_argument('--logs_base_dir', type=str,
                         help='Directory where to write event logs.',
-                        default='/scratch/BingZhang/AAAI/logs/dual-loss/')
+                        default='/scratch/BingZhang/AAAI/logs/single-loss/')
     parser.add_argument('--models_base_dir', type=str,
                         help='Directory where to write trained models and checkpoints.',
-                        default='/scratch/BingZhang/AAAI/models/dual-loss/')
+                        default='/scratch/BingZhang/AAAI/models/single-loss/')
     parser.add_argument('--gpu_memory_fraction', type=float,
                         help='Upper bound on the amount of GPU memory that will be used by the process.', default=1.0)
     parser.add_argument('--pretrained_model', type=str,
